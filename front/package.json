@@ -5,10 +5,14 @@
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
+    "bootstrap": "run-p \"bootstrap:backend\" \"bootstrap:frontend\"",
+    "bootstrap:frontend": "yarn",
+    "bootstrap:backend": "cd .. && cd backend && yarn install:helper",
     "build": "gatsby build",
     "develop": "gatsby develop",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "start": "npm run develop",
+    "start": "run-p \"start:backend\" \"develop\"",
+    "start:backend": "cd .. && cd backend && yarn start",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
     "test": "echo \"Write tests! -> https://gatsby.dev/unit-testing\" && exit 1"
@@ -19,6 +23,7 @@
     "gatsby-plugin-manifest": "^2.4.35",
     "gatsby-plugin-react-helmet": "^3.3.14",
     "lodash": "^4.17.20",
+    "npm-run-all": "^4.1.5",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-helmet": "^6.1.0",
