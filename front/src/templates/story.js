@@ -11,7 +11,7 @@ class Story extends React.Component {
       width = window.innerWidth
     }
 
-    const story = this.props.data.hnStory
+    const story = this.props.data.hnTopStory
     // Flatten comments tree.
     const seenComments = {}
     const flattenComments = (comments, depth = 0) => {
@@ -96,7 +96,7 @@ export default Story
 
 export const pageQuery = graphql`
   query($id: String!) {
-    hnStory(id: { eq: $id }) {
+    hnTopStory(id: { eq: $id }) {
       id
       title
       url

@@ -11,9 +11,9 @@ class Layout extends React.Component {
       <center>
         <table
           id="hnmain"
-          border={0}
-          cellPadding={0}
-          cellSpacing={0}
+          cellPadding="0"
+          cellSpacing="0"
+          width="85%"
           style={{
             borderWidth: 0,
             backgroundColor: `#f6f6ef`,
@@ -23,26 +23,22 @@ class Layout extends React.Component {
             <tr>
               <td style={{ backgroundColor: `#ff6600` }}>
                 <table
-                  border={`0`}
-                  cellPadding={`0`}
-                  cellSpacing={0}
+                  cellPadding="0"
+                  cellSpacing="0"
+                  width="100%"
                   style={{
-                    borderWidth: 0,
-                    borderSpacing: 0,
-                    width: `100%`,
                     padding: `2px`,
-                    paddingBottom: 0,
-                    marginBottom: -1, // Not sure where extra bottom padding is coming from.
+                    border: `0`,
                   }}
                 >
                   <tbody>
                     <tr>
                       <td style={{ width: `18px`, paddingRight: `4px` }}>
-                        <a href="http://www.ycombinator.com">
+                        <a href="https://news.ycombinator.com">
                           <img
                             src={y18Gif}
-                            width="18px"
-                            height="18px"
+                            width="18"
+                            height="18"
                             style={{ border: `1px white solid` }}
                           />
                         </a>
@@ -52,10 +48,11 @@ class Layout extends React.Component {
                           <b className="hnname">
                             <Link to="/">Hacker News </Link>
                           </b>
-                          <a href="newest">new</a>|
-                          <a href="newcomments">comments</a>|
-                          <a href="show">show</a>|<a href="ask">ask</a>|
-                          <a href="jobs">jobs</a>|<a href="submit">submit</a>
+                          <Link to="/newest">new</Link> |{" "}
+                          <a href="front">past</a> |{" "}
+                          <a href="newcomments">comments</a> |{" "}
+                          <a href="ask">ask</a> | <a href="show">show</a> |{" "}
+                          <a href="jobs">jobs</a> | <a href="submit">submit</a>{" "}
                         </span>
                       </td>
                       <td style={{ textAlign: `right`, paddingRight: `4px` }}>

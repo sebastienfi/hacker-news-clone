@@ -13,13 +13,13 @@ exports.createPages = ({ graphql, actions }) => {
   // it like the site has a built-in database constructed
   // from the fetched data that you can run queries against.
 
-  // HNStory is a data node type created from the HN API “allHnStory” is a
+  // HNTopStory is a data node type created from the HN API “allHnTopStory” is a
   // "connection" (a GraphQL convention for accessing a list of nodes) gives
-  // us an easy way to query all HNStory nodes.
+  // us an easy way to query all HNTopStory nodes.
   return graphql(
     `
       {
-        allHnStory(limit: 1000) {
+        allHnTopStory(limit: 1000) {
           edges {
             node {
               id
@@ -37,7 +37,7 @@ exports.createPages = ({ graphql, actions }) => {
     const pageTemplate = path.resolve(`./src/templates/story.js`)
     // We want to create a detailed page for each
     // story page. We'll just use the HN story ID for the slug.
-    _.each(result.data.allHnStory.edges, edge => {
+    _.each(result.data.allHnTopStory.edges, edge => {
       // Gatsby uses Redux to manage its internal state.
       // Plugins and sites can use functions like "createPage"
       // to interact with Gatsby.

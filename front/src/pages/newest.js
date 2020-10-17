@@ -1,11 +1,11 @@
 import React from "react"
 import { graphql } from "gatsby"
 import Layout from "../components/layout"
-import StoryTopItem from "../components/story-top-item"
+import StoryNewsItem from "../components/story-news-item"
 
 class Index extends React.Component {
   render() {
-    const { allHnTopStory } = this.props.data
+    const { allHnNewStory } = this.props.data
     return (
       <Layout>
         <table
@@ -15,8 +15,8 @@ class Index extends React.Component {
           style={{ border: 0 }}
         >
           <tbody>
-            {allHnTopStory.edges.map(({ node }) => (
-              <StoryTopItem key={node.id} story={node} />
+            {allHnNewStory.edges.map(({ node }) => (
+              <StoryNewsItem key={node.id} story={node} />
             ))}
             <tr className="morespace" style={{ height: `10px` }} />
             <tr>
@@ -37,10 +37,10 @@ export default Index
 
 export const pageQuery = graphql`
   query {
-    allHnTopStory(sort: { fields: [order] }) {
+    allHnNewStory(sort: { fields: [order] }) {
       edges {
         node {
-          ...Story_Top_item
+          ...Story_News_item
         }
       }
     }

@@ -7,14 +7,26 @@ const get = query =>
 
 exports.createSchemaCustomization = async ({ actions }) => {
   const typeDefs = `
-      type HNComment implements Node @childOf(types: ["HNStory", "HNComment"], many: true) {
+      type HNComment implements Node @childOf(types: ["HNTopStory", "HNNewStory", "HNComment"], many: true) {
         text: String
         timeISO: Date! @dateformat
         by: String!
         order: Int!
       }
   
-      type HNStory implements Node {
+      type HNTopStory implements Node {
+        title: String
+        score: Int
+        timeISO: Date! @dateformat
+        url: String
+        by: String!
+        descendants: Int
+        content: String!
+        domain: String
+        order: Int!
+      }
+
+      type HNNewStory implements Node {
         title: String
         score: Int
         timeISO: Date! @dateformat
@@ -82,6 +94,42 @@ exports.sourceNodes = async ({
           }
         }
       }
+      newStories(limit: 30) {
+        id
+        title
+        score
+        timeISO
+        url
+        by {
+          id
+        }
+        descendants
+        kids {
+          ...commentsFragment
+          kids {
+            ...commentsFragment
+            kids {
+              ...commentsFragment
+              kids {
+                ...commentsFragment
+                kids {
+                  ...commentsFragment
+                  kids {
+                    ...commentsFragment
+                    kids {
+                      ...commentsFragment
+                      kids {
+                        ...commentsFragment
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
     }
   }
   
@@ -97,93 +145,95 @@ exports.sourceNodes = async ({
   )
   console.timeEnd(`fetch HN data`)
 
-  // Create top-story nodes.
-  result.data.data.hn.topStories.forEach((story, i) => {
-    const storyStr = JSON.stringify(story)
+  const creatHNNodes = (stories, typeName) =>
+    stories.forEach((story, i) => {
+      const storyStr = JSON.stringify(story)
 
-    // Ask HN, Polls, etc. don't have urls.
-    // For those that do, HN displays just the bare domain.
-    let domain
-    if (story.url) {
-      const parsedUrl = url.parse(story.url)
-      const splitHost = parsedUrl.host.split(`.`)
-      if (splitHost.length > 2) {
-        domain = splitHost.slice(1).join(`.`)
-      } else {
-        domain = splitHost.join(`.`)
+      // Ask HN, Polls, etc. don't have urls.
+      // For those that do, HN displays just the bare domain.
+      let domain
+      if (story.url) {
+        const parsedUrl = url.parse(story.url)
+        const splitHost = parsedUrl.host.split(`.`)
+        if (splitHost.length > 2) {
+          domain = splitHost.slice(1).join(`.`)
+        } else {
+          domain = splitHost.join(`.`)
+        }
       }
-    }
 
-    let kids
-    kids = _.pick(story, `kids`)
-    if (!kids.kids) {
-      kids.kids = []
-    }
-    const kidLessStory = _.omit(story, `kids`)
-    const childIds = kids.kids.filter(Boolean).map(k => createNodeId(k.id))
+      let kids
+      kids = _.pick(story, `kids`)
+      if (!kids.kids) {
+        kids.kids = []
+      }
+      const kidLessStory = _.omit(story, `kids`)
+      const childIds = kids.kids.filter(Boolean).map(k => createNodeId(k.id))
 
-    const storyNode = {
-      ...kidLessStory,
-      id: createNodeId(kidLessStory.id),
-      children: childIds,
-      parent: null,
-      content: storyStr,
-      internal: {
-        type: `HNStory`,
-      },
-      domain,
-      order: i + 1,
-    }
+      const storyNode = {
+        ...kidLessStory,
+        id: createNodeId(kidLessStory.id),
+        children: childIds,
+        parent: null,
+        content: storyStr,
+        internal: {
+          type: typeName,
+        },
+        domain,
+        order: i + 1,
+      }
 
-    // Just store the user id
-    storyNode.by = storyNode.by.id
+      // Just store the user id
+      storyNode.by = storyNode.by.id
 
-    // Get content digest of node.
-    const contentDigest = createContentDigest(storyNode)
-    storyNode.internal.contentDigest = contentDigest
-    createNode(storyNode)
+      // Get content digest of node.
+      const contentDigest = createContentDigest(storyNode)
+      storyNode.internal.contentDigest = contentDigest
+      createNode(storyNode)
 
-    // Recursively create comment nodes.
-    const createCommentNodes = (comments, parent, depth = 0) => {
-      comments.forEach((comment, i) => {
-        if (!comment) {
-          return
-        }
-        if (!comment.kids) {
-          comment.kids = []
-        }
-        let commentChildIds = comment.kids.map(k => {
-          if(!k) console.log('comment', comment )
-          createNodeId(k.id)})
-        let commentNode = {
-          ..._.omit(comment, `kids`),
-          id: createNodeId(comment.id),
-          children: commentChildIds,
-          parent,
-          internal: {
-            type: `HNComment`,
-          },
-          order: i + 1,
-        }
+      // Recursively create comment nodes.
+      const createCommentNodes = (comments, parent, depth = 0) => {
+        comments.forEach((comment, i) => {
+          if (!comment) {
+            return
+          }
+          if (!comment.kids) {
+            comment.kids = []
+          }
+          let commentChildIds = comment.kids.map(k => createNodeId(k.id))
+          let commentNode = {
+            ..._.omit(comment, `kids`),
+            id: createNodeId(comment.id),
+            children: commentChildIds,
+            parent,
+            internal: {
+              type: `HNComment`,
+            },
+            order: i + 1,
+          }
 
-        commentNode.by = commentNode.by.id
-        const nodeStr = JSON.stringify(commentNode)
+          commentNode.by = commentNode.by.id
+          const nodeStr = JSON.stringify(commentNode)
 
-        // Get content digest of comment node.
-        const contentDigest = createContentDigest(nodeStr)
-        commentNode.internal.contentDigest = contentDigest
-        commentNode.internal.content = nodeStr
+          // Get content digest of comment node.
+          const contentDigest = createContentDigest(nodeStr)
+          commentNode.internal.contentDigest = contentDigest
+          commentNode.internal.content = nodeStr
 
-        createNode(commentNode)
+          createNode(commentNode)
 
-        if (comment.kids.length > 0) {
-          createCommentNodes(comment.kids, commentNode.id, depth + 1)
-        }
-      })
-    }
+          if (comment.kids.length > 0) {
+            createCommentNodes(comment.kids, commentNode.id, depth + 1)
+          }
+        })
+      }
 
-    createCommentNodes(kids.kids, storyNode.id)
-  })
+      createCommentNodes(kids.kids, storyNode.id)
+    })
+
+  // Create story nodes.
+  await creatHNNodes(result.data.data.hn.topStories, `HNTopStory`)
+  await creatHNNodes(result.data.data.hn.newStories, `HNNewStory`)
 
   return
 }

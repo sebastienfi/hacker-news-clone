@@ -7,9 +7,6 @@
 module.exports = {
   /* Your site config here */
   plugins: [
-    "gatsby-plugin-top-layout",
-    "gatsby-plugin-material-ui",
-    "gatsby-plugin-react-helmet",
     `gatsby-source-hacker-news-v2`,
     {
       resolve: `gatsby-plugin-manifest`,
@@ -22,5 +19,6 @@ module.exports = {
         display: `minimal-ui`,
       },
     },
+    "gatsby-plugin-react-helmet",
   ],
 }
