@@ -1,5 +1,5 @@
 import React from "react"
-import { Link, graphql } from "gatsby"
+import { graphql } from "gatsby"
 import StoryItemView from "./story-item-view"
 
 class StoryTopItem extends React.Component {

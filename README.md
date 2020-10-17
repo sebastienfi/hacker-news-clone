@@ -12,6 +12,7 @@ NPM, Yarn, NodeJS (nvm).
 1. Clone this repo:  `git clone git@github.com:sebastienfi/hacker-news-clone.git`
 2. Bootstrap: `cd front && yarn bootstrap`
 3. Launch: `yarn start` (while in *front* directory)
+4. Browse at http://localhost:8000
 
 # To be done
 

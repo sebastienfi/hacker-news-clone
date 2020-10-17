@@ -40,6 +40,7 @@ class Layout extends React.Component {
                             width="18"
                             height="18"
                             style={{ border: `1px white solid` }}
+                            alt="logo"
                           />
                         </a>
                       </td>

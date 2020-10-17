@@ -5,8 +5,7 @@
   "version": "0.1.0",
   "license": "0BSD",
   "scripts": {
-    "bootstrap": "run-p \"bootstrap:backend\" \"bootstrap:frontend\"",
-    "bootstrap:frontend": "yarn",
+    "bootstrap": "yarn && yarn bootstrap:backend",
     "bootstrap:backend": "cd .. && cd backend && yarn install:helper",
     "build": "gatsby build",
     "develop": "gatsby develop",

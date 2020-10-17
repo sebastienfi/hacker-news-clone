@@ -11,6 +11,7 @@ class StoryComment extends React.Component {
           <tr>
             <td className="ind">
               <img
+              alt="s"
                 src={sGif}
                 height="1"
                 width={comment.depth * Math.min(40, this.props.width / 20) + 14}
